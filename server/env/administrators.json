@@ -1,0 +1,16 @@
+[
+
+    {
+        "name": "Admin 1",
+        "email": "test@abc.com",
+        "phoneNumber": 2223334444,
+        "carrier": "att" // refer to  https://github.com/jefftham/email-to-phone#list
+    },
+    {
+        "name": "Admin 2",
+        "email": "test@abc.com",
+        "phoneNumber": 2223334444,
+        "carrier": "att" // refer to  https://github.com/jefftham/email-to-phone#list
+    }
+
+]
