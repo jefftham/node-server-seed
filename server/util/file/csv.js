@@ -294,3 +294,205 @@ module.exports.read = function (filePath, gotHeader = true, customizeHeaders = [
         }); // end  promise
     }
 }
+
+
+
+
+/*
+// example of csv.readRaw()
+
+// rawData
+let rawData = "Year,Make,Model,Length\n1997,Ford,E350,2.34\n2000,Mercury,Cougar,2.38\n";
+
+// use promise
+let ret = csv.readRaw(rawData, true, ['yr', 'mk', 'md', 'lgth'])
+    .then((ret) => {
+        console.log(ret);
+    });
+
+// use callback
+csv.readRaw(rawData, (ret) => {
+    console.log(ret);
+});
+ */
+module.exports.readRaw = function (rawData, gotHeader = true, customizeHeaders = [], callback) {
+
+
+    // allow dynamic position for arguments
+    // (allow callback is the last param and skip the default param like header and customHeaders)
+
+    let args = Array.from(arguments);
+    let lastParamPos = args.length - 1;
+    if (typeof args[lastParamPos] === 'function') {
+        //  use callback
+        let header = true;
+        let customHeaders = [];
+
+        switch (args.length) {
+            case 0:
+            case 1:
+                throw new Error('Missing rawData & callback: mandatory');
+                break;
+            case 2:
+                rawData = args[0];
+                callback = args[1];
+                break;
+            case 3:
+                rawData = args[0];
+                header = args[1];
+                callback = args[2];
+                break;
+            case 4:
+                rawData = args[0];
+                header = args[1];
+                customHeaders = args[2]
+                callback = args[3];
+                break;
+            default:
+                throw new Error('More paramaters than expected');
+        }
+
+
+
+
+
+        let ret;
+
+        if (!header && (Array.isArray(customHeaders) && customHeaders.length === 0)) {
+            // if no header
+            // return an array of array
+            /*            [ [ 'Year', 'Make', 'Model', 'Length' ],
+                                     [ '1997', 'Ford', 'E350', '2.34' ],
+                                     [ '2000', 'Mercury', 'Cougar', '2.38' ] ]
+
+                     */
+            console.log('csv without header');
+            ret = d3.csvParseRows(rawData);
+            callback(ret);
+        } else if (!header && (Array.isArray(customHeaders) && customHeaders.length > 0)) {
+            // if no header in the file, and provide a customHeaders now
+            console.log('csv without header, custom headers provided');
+            /*      [ { yr: 'Year', mk: 'Make', md: 'Model', lgth: 'Length' },
+                        { yr: '1997', mk: 'Ford', md: 'E350', lgth: '2.34' },
+                        { yr: '2000', mk: 'Mercury', md: 'Cougar', lgth: '2.38' } ]
+            */
+            ret = d3.csvParseRows(rawData, (d, i) => {
+                let newRow = {};
+                let index = 0
+                for (let columnHeader of customHeaders) {
+                    newRow[columnHeader] = d[index];
+                    index++;
+                }
+                return newRow;
+            });
+            callback(ret);
+        } else if (header && (Array.isArray(customHeaders) && customHeaders.length === 0)) {
+            //  with header and no customHeaders
+            /*                    [ { Year: '1997', Make: 'Ford', Model: 'E350', Length: '2.34' },
+                                     { Year: '2000', Make: 'Mercury', Model: 'Cougar', Length: '2.38' },
+                                    columns: [ 'Year',s: [ 'Year', 'Make', 'Model', 'Length' ] ]
+            */
+            console.log('csv with header');
+            ret = d3.csvParse(rawData);
+            callback(ret);
+        } else if (header && (Array.isArray(customHeaders) && customHeaders.length > 0)) {
+            // with header and customeHeaders for return
+            console.log('csv with header, but prefer custom headers');
+            /*       [ { yr: '1997', mk: 'Ford', md: 'E350', lgth: '2.34' },
+                          { yr: '2000', mk: 'Mercury', md: 'Cougar', lgth: '2.38' },
+                             columns: [ 'Year', 'Make', 'Model', 'Length' ] ]
+               */
+            ret = d3.csvParse(rawData, (eachRow) => {
+                let newRow = {};
+                let index = 0
+                for (let columnKey in eachRow) {
+                    newRow[customHeaders[index]] = eachRow[columnKey]
+                    index++;
+                }
+                return newRow;
+            });
+            callback(ret);
+        } else {
+            console.error('Unknown error in csv parsing.')
+        }
+
+
+
+    } else {
+        // use promise
+
+        let header = gotHeader;
+        let customHeaders = customizeHeaders;
+
+        return new Promise((resolve, reject) => {
+
+            // the logic is same as callback (above)
+
+
+
+            let ret;
+
+            if (!header && (Array.isArray(customHeaders) && customHeaders.length === 0)) {
+                // if no header
+                // return an array of array
+                /*            [ [ 'Year', 'Make', 'Model', 'Length' ],
+                                         [ '1997', 'Ford', 'E350', '2.34' ],
+                                         [ '2000', 'Mercury', 'Cougar', '2.38' ] ]
+
+                         */
+                console.log('csv without header');
+                ret = d3.csvParseRows(rawData);
+                resolve(ret);
+            } else if (!header && (Array.isArray(customHeaders) && customHeaders.length > 0)) {
+                // if no header in the file, and provide a customHeaders now
+                console.log('csv without header, custom headers provided');
+                /*      [ { yr: 'Year', mk: 'Make', md: 'Model', lgth: 'Length' },
+                            { yr: '1997', mk: 'Ford', md: 'E350', lgth: '2.34' },
+                            { yr: '2000', mk: 'Mercury', md: 'Cougar', lgth: '2.38' } ]
+                */
+                ret = d3.csvParseRows(rawData, (d, i) => {
+                    let newRow = {};
+                    let index = 0
+                    for (let columnHeader of customHeaders) {
+                        newRow[columnHeader] = d[index];
+                        index++;
+                    }
+                    return newRow;
+                });
+                resolve(ret);
+            } else if (header && (Array.isArray(customHeaders) && customHeaders.length === 0)) {
+                //  with header and no customHeaders
+                /*                    [ { Year: '1997', Make: 'Ford', Model: 'E350', Length: '2.34' },
+                                         { Year: '2000', Make: 'Mercury', Model: 'Cougar', Length: '2.38' },
+                                        columns: [ 'Year',s: [ 'Year', 'Make', 'Model', 'Length' ] ]
+                */
+                console.log('csv with header');
+                ret = d3.csvParse(rawData);
+                resolve(ret);
+            } else if (header && (Array.isArray(customHeaders) && customHeaders.length > 0)) {
+                // with header and customeHeaders for return
+                console.log('csv with header, but prefer custom headers');
+                /*       [ { yr: '1997', mk: 'Ford', md: 'E350', lgth: '2.34' },
+                          { yr: '2000', mk: 'Mercury', md: 'Cougar', lgth: '2.38' },
+                             columns: [ 'Year', 'Make', 'Model', 'Length' ] ]
+               */
+                ret = d3.csvParse(rawData, (eachRow) => {
+                    let newRow = {};
+                    let index = 0
+                    for (let columnKey in eachRow) {
+                        newRow[customHeaders[index]] = eachRow[columnKey]
+                        index++;
+                    }
+                    return newRow;
+                });
+                resolve(ret);
+            } else {
+                reject('Unknown error in csv parsing.');
+                console.error('Unknown error in csv parsing.')
+            }
+
+
+
+        }); // end  promise
+    }
+}
