@@ -7,17 +7,38 @@ const d3 = require('d3');
 // example of csv.write()
 const csv = require('./csv')
 
-// use promise
+// options ref https://www.npmjs.com/package/csv-write-stream#default-options
+
+// use promise without options
+csv.write('./t1.csv')
+    .then((writer) => {
+        let arr =[{id: 1,email: 'test1@abc.com'}, { id: 2, email: 'test2@abc.com'}];
+        for (let e of arr) {
+            writer.write(e);
+        }
+    }).catch(() => console.log('error in writing csv'));
+
+// use promise with options
 csv.write('./t1.csv', ["ID", "Email"])
 .then((writer) => {
     let arr =[{id: 1,email: 'test1@abc.com'}, { id: 2, email: 'test2@abc.com'}];
     for (let e of arr) {
         writer.write([e.id, e.email]);
     }
-});
+}).catch(()=> console.log('error in writing csv'));
 
-// use callback
+// use callback without options
 csv.write(
+    './test.csv',
+    (writer) => {
+        let arr = [{id: 1,email: 'test1@abc.com'}, { id: 2, email: 'test2@abc.com'}];
+        for (let e of arr) {
+            writer.write(e);
+        }
+    });
+
+// use callback with option
+ csv.write(
     './test.csv', ["ID", "Email"],
     (writer) => {
         let arr = [{id: 1,email: 'test1@abc.com'}, { id: 2, email: 'test2@abc.com'}];
@@ -28,10 +49,33 @@ csv.write(
 
  */
 
-module.exports.write = function (filePath, headers = [], callback) {
-    let writer = csvWriter({
-        headers: headers
-    });
+let defaultOptions = {
+    separator: ',',
+    newline: '\n',
+    headers: undefined,
+    sendHeaders: true
+}
+
+module.exports.write = function (filePath, options = defaultOptions, callback) {
+
+    let csvOptions = JSON.parse(JSON.stringify(defaultOptions)); // deep clone
+
+    // make sure the default option values are taken if users did not supply it
+    if (options && Array.isArray(options)) {
+        // the options is an array. treats it as header
+
+        csvOptions.headers = options;
+    } else if (options && typeof options === 'object') {
+        // watch out, typeof [] === 'object' as well
+        for (let key in options) {
+            csvOptions[key] = options[key];
+        }
+    } else if (options && typeof options === 'function') {
+        // only 2 params and the last one is function, it should be a callback
+        callback = options;
+    }
+
+    let writer = csvWriter(csvOptions);
     writer.pipe(fs.createWriteStream(filePath));
 
     let args = Array.from(arguments);
@@ -45,7 +89,6 @@ module.exports.write = function (filePath, headers = [], callback) {
             resolve(writer);
         });
     }
-
     writer.end();
 }
 
