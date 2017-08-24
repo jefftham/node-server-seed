@@ -14,6 +14,15 @@
      connectString: config.dbConfig.connectString
  };
 
+ exports.setConfig = function (configObject) {
+     dbConnConfig = configObject;
+ };
+
+ exports.getConfig = function () {
+     // console.log(dbConnConfig);
+     return dbConnConfig;
+ }
+
  /*
  // example
  const oracle = require('./oracle');
@@ -21,7 +30,7 @@
  let sqlCommand = `SELECT sysdate FROM dual`;
 
  // promise
- oracle(sqlCommand, [])
+ oracle.query(sqlCommand, [])
      .then((results) => {
          console.log(results.length);
          console.log(results);
@@ -29,14 +38,14 @@
 
 
  // callback
- oracle( sqlCommand, [], (results) => {
+ oracle.query( sqlCommand, [], (results) => {
              console.log(results.length);
              console.log(results);
          })
   */
 
  // Get a non-pooled connection
- module.exports = function (sqlCommand, params, callback) {
+ exports.query = function (sqlCommand, params, callback) {
 
      let args = Array.from(arguments);
      let lastParamPos = args.length - 1;

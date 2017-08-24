@@ -5,6 +5,7 @@ env.secret.json
 
 # compiled output
 # /dist
+/instantclient
 /tmp
 /out-tsc
 

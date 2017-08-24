@@ -31,15 +31,24 @@ let poolConfig = {
 
 let poolConfigComplete = Object.assign({}, poolConfig, dbConfig);
 
-const pool = new Pool(poolConfigComplete);
+let pool = new Pool(poolConfigComplete);
 
+exports.setConfig = function (configObject) {
+    poolConfigComplete = Object.assign({}, poolConfig, configObject);
+    pool = new Pool(poolConfigComplete);
+};
+
+exports.getConfig = function () {
+    // console.log(dbConnConfig);
+    return poolConfigComplete;
+}
 
 /*
  // example
 const pg = require('./postgres');
 
  // promise
-pg('SELECT * From dummy.foo', [])
+pg.query('SELECT * From dummy.foo', [])
     .then((res) => {
         console.log(res)
     })
@@ -48,12 +57,12 @@ pg('SELECT * From dummy.foo', [])
     });
 
  // callback
-pg('SELECT * From dummy.foo', [],
+pg.query('SELECT * From dummy.foo', [],
     (res) => {
         console.log(res)
     });
  */
-module.exports = function (sqlCommand, params = [], callback) {
+exports.query = function (sqlCommand, params = [], callback) {
 
     let args = Array.from(arguments);
     let lastParamPos = args.length - 1;
