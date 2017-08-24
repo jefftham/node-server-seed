@@ -182,8 +182,8 @@
                                          return; //exit recursive function prior to closing result set
                                      }
 
-                                     console.log('Finish processing ' + rowsProcessed + ' rows');
-                                     console.log('Total time (in seconds):', ((Date.now() - startTime) / 1000));
+                                     //  console.log('Finish processing ' + rowsProcessed + ' rows');
+                                     //  console.log('Total time (in seconds):', ((Date.now() - startTime) / 1000));
 
                                      //  console.log('promise');
                                      resolve(resultArr);
