@@ -332,7 +332,6 @@ module.exports.readRaw = function (rawData, gotHeader = true, customizeHeaders =
             case 0:
             case 1:
                 throw new Error('Missing rawData & callback: mandatory');
-                break;
             case 2:
                 rawData = args[0];
                 callback = args[1];
