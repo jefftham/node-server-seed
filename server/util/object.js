@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 // compare 2 objects with its length, keys, values.
 // lettercase of the key is not a concern
 // datatype of the value is not a concern
@@ -38,4 +40,10 @@ exports.isEqual = function (obj1, obj2) {
     }
 
     return true;
-}
+};
+
+
+//ref https://lodash.com/docs/#isEqual
+exports.isIdentical = function (obj1, obj2) {
+    return _.isEqual(obj1, obj2);
+};
