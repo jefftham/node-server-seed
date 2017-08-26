@@ -68,28 +68,43 @@ exports.query = function (sqlCommand, params = [], callback) {
     let lastParamPos = args.length - 1;
 
     if (typeof args[lastParamPos] === 'function') {
-        // callback
-        pool.query(sqlCommand, params, (err, res) => {
-            if (err) console.log(err);
-            // return everything
-            // array of objects
-            // console.log(res.rows)
-            callback(res.rows)
-            pool.end()
-        })
+
+        pool.connect((err, client, release) => {
+            if (err) {
+                return console.error('Error acquiring client', err.stack);
+            }
+            // callback
+            client.query(sqlCommand, params, (err, res) => {
+                release();
+                if (err) console.log(err);
+                // return everything
+                // array of objects
+                // console.log(res.rows)
+                callback(res.rows);
+                // pool.end()
+            });
+        });
+
     } else {
         // promise
         return new Promise((resolve, reject) => {
-            pool.query(sqlCommand, params)
-                .then((res) => {
+
+            pool.connect((err, client, release) => {
+                if (err) {
+                    return console.error('Error acquiring client', err.stack);
+                }
+                // callback
+                client.query(sqlCommand, params, (err, res) => {
+                    release();
+                    if (err) reject(err);
+                    // return everything
+                    // array of objects
+                    // console.log(res.rows)
                     resolve(res.rows);
-                    pool.end()
-                })
-                .catch((err) => {
-                    console.log(err);
-                    reject(err)
-                    pool.end()
-                })
-        })
+                    // pool.end()
+                });
+            });
+
+        });
     }
 }
