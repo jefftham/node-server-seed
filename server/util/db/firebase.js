@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const config = require('./../../config');
+// const config = require('./../../config');
 
 
 let firebaseConfig = JSON.parse(process.env.firebaseConfig);
