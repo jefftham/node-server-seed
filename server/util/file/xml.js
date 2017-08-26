@@ -190,13 +190,11 @@ module.exports.write = function (data, options, filePath) {
             data = args[0];
             break;
         case 2:
-            console.log('case 2');
             data = args[0];
             if (typeof args[1] === 'object') {
                 xmlOptions = args[1];
             } else if (typeof args[1] === 'string') {
                 // it is filePath
-                console.log('filePath supplied')
                 writeToFilePath = args[1];
             }
             break;
