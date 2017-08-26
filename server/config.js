@@ -160,5 +160,23 @@ if (cfg.database === 'firebase') {
 
 
 
+//  override process.env
+//  throughout the application, it can refer:-    process.env.database
+for (let k in cfg) {
+
+    if (k === "dbConfig") {
+        // flatten dbConfig
+        for (let dbKey in cfg[k]) {
+            process.env[dbKey] = cfg[k][dbKey];
+        }
+
+    } else {
+        process.env[k] = cfg[k];
+    }
+}
+
+// console.log(process.env.connectString)
+
+
 // Export configuration object
 module.exports = cfg;
