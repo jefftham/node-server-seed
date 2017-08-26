@@ -158,3 +158,72 @@ module.exports.readRaw = function (rawData, options, callback) {
         }); // end  promise
     }
 }
+/*
+
+const xml = require('./xml');
+
+let obj = {    name: "Super",    Surname: "Man",    age: 23};
+
+let xmlRet = xml.write(obj);
+
+// or
+
+xml.write(obj, './text.xml');
+
+ */
+
+// ref https://www.npmjs.com/package/xml2js#options-for-the-builder-class
+module.exports.write = function (data, options, filePath) {
+
+    // allow dynamic position for arguments
+    // (allow callback is the last param and skip the default param, options)
+    let xmlOptions = {};
+    let writeToFilePath = '';
+
+    let args = Array.from(arguments);
+
+
+    switch (args.length) {
+        case 0:
+            throw new Error('Missing data: mandatory');
+        case 1:
+            data = args[0];
+            break;
+        case 2:
+            console.log('case 2');
+            data = args[0];
+            if (typeof args[1] === 'object') {
+                xmlOptions = args[1];
+            } else if (typeof args[1] === 'string') {
+                // it is filePath
+                console.log('filePath supplied')
+                writeToFilePath = args[1];
+            }
+            break;
+        case 3:
+            data = args[0];
+            xmlOptions = args[1];
+            writeToFilePath = args[2];
+            break;
+        default:
+            throw new Error('More paramaters than expected');
+    }
+
+    let xmlBuilder = new xml2js.Builder(xmlOptions);
+    let xml = xmlBuilder.buildObject(data);
+
+
+    if (writeToFilePath) {
+        //  it is filePath,  write it
+
+        fs.writeFile(writeToFilePath, xml, 'utf8', (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+
+    } else {
+        //  return the xml
+        return xml;
+    }
+};
