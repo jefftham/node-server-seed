@@ -1,5 +1,5 @@
  const oracledb = require('oracledb-pb');
- const config = require('./../../config');
+ // const config = require('./../../config');
 
  // setup oracle client in nodejs
  // # ref https://github.com/oracle/node-oracledb/issues/18
@@ -9,9 +9,9 @@
 
 
  let dbConnConfig = {
-     user: config.dbConfig.user,
-     password: config.dbConfig.password,
-     connectString: config.dbConfig.connectString
+     user: process.env.user,
+     password: process.env.password,
+     connectString: process.env.connectString
  };
 
  exports.setConfig = function (configObject) {
@@ -26,6 +26,7 @@
  /*
  // example
  const oracle = require('./oracle');
+ const config = require('./../../config'); // load config
 
  let sqlCommand = `SELECT sysdate FROM dual`;
 

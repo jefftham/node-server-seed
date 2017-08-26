@@ -1,4 +1,4 @@
-const config = require('./../../config');
+// const config = require('./../../config');
 const {
     Pool,
     Client
@@ -7,19 +7,19 @@ const {
 
 let dbConfig;
 
-if (config.dbConfig.connectString) {
+if (process.env.connectString) {
     // use connectString
     dbConfig = {
-        connectionString: config.dbConfig.connectString
+        connectionString: process.env.connectString
     };
 } else {
     // use  user/password ...
     dbConfig = {
-        user: config.dbConfig.user,
-        host: config.dbConfig.host,
-        database: config.dbConfig.database,
-        password: config.dbConfig.password,
-        port: config.dbConfig.port
+        user: process.env.user,
+        host: process.env.host,
+        database: process.env.database,
+        password: process.env.password,
+        port: process.env.port
     };
 
 }
@@ -46,6 +46,7 @@ exports.getConfig = function () {
 /*
  // example
 const pg = require('./postgres');
+const config = require('./../../config'); // load config
 
  // promise
 pg.query('SELECT * From dummy.foo', [])
