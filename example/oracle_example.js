@@ -13,7 +13,7 @@ oracle.setConfig(dbConfig);
 
 let sqlCommand = `SELECT sysdate FROM dual`;
 
-// let sqlCommand = `SELECT column1, column2 FROM FOO.BAR WHERE id= ;0, name = ;1 `;
+// let sqlCommand = `SELECT column1, column2 FROM FOO.BAR WHERE id= :0, name = :1 `;
 // let param = ['123', 'jeff']
 
 // promise
