@@ -1,12 +1,39 @@
 const admin = require("firebase-admin");
 const config = require('./../../config');
 
+
+let firebaseConfig = JSON.parse(process.env.firebaseConfig);
+let dbURL = process.env.firebaseDB;
+
 admin.initializeApp({
-    credential: admin.credential.cert(config.firebaseConfig),
-    databaseURL: config.firebaseDB
+    credential: admin.credential.cert(firebaseConfig),
+    databaseURL: dbURL
 });
 
-const db = admin.database();
+let db = admin.database();
+
+exports.setConfig = function (configObject = firebaseConfig, url = dbURL) {
+    firebaseConfig = configObject;
+    dbURL = url;
+
+    admin.initializeApp({
+        credential: admin.credential.cert(firebaseConfig),
+        databaseURL: dbURL
+    });
+
+    db = admin.database();
+};
+
+exports.getConfig = function () {
+    // console.log(dbConnConfig);
+    return firebaseConfig;
+}
+
+exports.getURL = function () {
+    // console.log(dbConnConfig);
+    return dbURL;
+}
+
 
 /*
 const fba = require('./firebase');

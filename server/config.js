@@ -170,12 +170,14 @@ for (let k in cfg) {
             process.env[dbKey] = cfg[k][dbKey];
         }
 
+    } else if (k === "firebaseConfig") {
+        process.env[k] = JSON.stringify(cfg[k]);
     } else {
         process.env[k] = cfg[k];
     }
 }
 
-// console.log(process.env.connectString)
+// console.log(process.env.firebaseConfig);
 
 
 // Export configuration object
