@@ -1,10 +1,31 @@
-const config = require('./../../config');
+// const config = require('./../../config');
 const email = require('./../email/emailClient');
 const carrierLookup = require('email-to-phone');
 
+
+let config = {
+
+    // Twilo setting
+    "twilioAccountSid": process.env.twilioAccountSid,
+    "twilioAuthToken": process.env.twilioAuthToken,
+    "twilioSenderNumber": process.env.twilioSenderNumber,
+
+    // email or twilio
+    "smsGateway": process.env.smsGateway,
+    "sendSms": process.env.smsGateway,
+};
+
+exports.setConfig = function (configObject) {
+    config = configObject;
+};
+
+exports.getConfig = function () {
+    return config;
+}
+
+
 let transporter = {};
 let fromEmail = '';
-
 
 module.exports.sendText = function (to, message, subject = 'subject', carrier = '') {
 
@@ -23,7 +44,7 @@ module.exports.sendText = function (to, message, subject = 'subject', carrier = 
 
                 console.log('send SMS by email');
 
-                let toAddress;
+                let toAddress = to;
 
                 if (!carrier) {
                     // carrier is falsy
@@ -57,7 +78,7 @@ module.exports.sendText = function (to, message, subject = 'subject', carrier = 
                 });
 
             } else {
-                throw new Error('Unknown SMS_GATEWAY setting in environment json');
+                console.error('Unknown SMS_GATEWAY setting in environment json');
             }
 
         }
