@@ -1,4 +1,4 @@
-const config = require('./../../config');
+// const config = require('./../../config');
 const nodemailer = require('nodemailer');
 const smtp = require('nodemailer-smtp-transport');
 // const admins = require('./administrators.json');
@@ -9,43 +9,73 @@ const smtp = require('nodemailer-smtp-transport');
 // https://cloud.google.com/compute/docs/tutorials/sending-mail/using-mailjet
 // https://github.com/GoogleCloudPlatform/nodejs-docs-samples/blob/master/computeengine/mailjet.js
 
+
+let config = {
+    // nodemailer setting (if you choose to use regular email)
+    "emailService": process.env.emailService, //https://nodemailer.com/smtp/well-known/
+    "emailUser": process.env.emailUser,
+    "emailPass": process.env.emailPass,
+
+    // MAILJET setting
+    "mailjet_email": process.env.mailjet_email,
+    "mailjet_api": process.env.mailjet_api,
+    "mailjet_secret": process.env.mailjet_secret,
+
+    //  regular or  mailjet
+    "emailGateway": process.env.emailGateway,
+    "sendEmail": process.env.sendEmail
+};
+
+exports.setConfig = function (configObject) {
+    config = configObject;
+    takeConfig();
+};
+
+exports.getConfig = function () {
+    return config;
+}
+
+
 let transporter = {};
 let fromEmail = '';
 
-if (config.emailGateway === 'regular') {
-    // use regular with login
+function takeConfig() {
+    if (config.emailGateway === 'regular') {
+        // use regular with login
 
-    console.log('regular email');
+        console.log('regular email');
 
-    fromEmail = config.emailUser;
+        fromEmail = config.emailUser;
 
-    transporter = nodemailer.createTransport({
-        service: config.emailService,
-        auth: {
-            user: config.emailUser,
-            pass: config.emailPass
-        },
-        pool: true
-    });
-} else if (config.emailGateway === 'mailjet') {
-    // use mailjet
+        transporter = nodemailer.createTransport({
+            service: config.emailService,
+            auth: {
+                user: config.emailUser,
+                pass: config.emailPass
+            },
+            pool: true
+        });
+    } else if (config.emailGateway === 'mailjet') {
+        // use mailjet
 
-    console.log('mailjet email');
+        console.log('mailjet email');
 
-    fromEmail = config.mailjet_email;
+        fromEmail = config.mailjet_email;
 
-    transporter = nodemailer.createTransport(smtp({
-        host: 'in.mailjet.com',
-        port: 2525,
-        auth: {
-            user: config.mailjet_api,
-            pass: config.mailjet_secret
-        }
-    }));
-} else {
-    throw new Error('Unknown EMAIL_GATEWAY setting in environment json');
+        transporter = nodemailer.createTransport(smtp({
+            host: 'in.mailjet.com',
+            port: 2525,
+            auth: {
+                user: config.mailjet_api,
+                pass: config.mailjet_secret
+            }
+        }));
+    } else {
+        console.error('Unknown EMAIL_GATEWAY setting in environment json');
+    }
+
 }
-
+takeConfig();
 
 
 module.exports.sendEmail = function (to, message, subject = 'subject', emailToMassaging = false) {
@@ -58,6 +88,7 @@ module.exports.sendEmail = function (to, message, subject = 'subject', emailToMa
 
         if (config.debug || config.dev) {
             // in debuging mode, redirect all email to admins
+            config.admins = config.admins || [];
             config.admins.forEach(function (admin) {
                 receivers += admin.email + ','; // added comma at the end
             });
