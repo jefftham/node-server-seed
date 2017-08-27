@@ -42,7 +42,7 @@ module.exports.sendText = function (to, message, subject = 'subject', carrier = 
         // send sms is on
         if (config.debug || config.dev) {
             // in debuging mode, redirect all sms to admins through email
-            email.sendEmail(to, message, true);
+            email.sendEmail(to, message, subject, true);
         } else {
             // is sendSms = true && not in debug mode
 
