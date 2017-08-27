@@ -7,13 +7,23 @@ const _ = require('lodash');
 // object should not be empty
 exports.isEqual = function (obj1, obj2) {
 
-    if (!obj1 || !obj2) {
+    let allObj1Keys;
+    let allObj2Keys;
+
+    try {
+        allObj1Keys = Object.keys(obj1);
+        allObj2Keys = Object.keys(obj2);
+    } catch (error) {
         console.log('Either one object is falsey, either undefined, null, or empty');
         return false;
     }
 
-    let allObj1Keys = Object.keys(obj1);
-    let allObj2Keys = Object.keys(obj2);
+    // empty object is not falsey
+    if (!obj1 || !obj2 || allObj1Keys || allObj2Keys) {
+        console.log('Either one object is falsey, either undefined, null, or empty');
+        return false;
+    }
+
 
     // compare length
     if (allObj1Keys.length !== allObj2Keys.length) {
