@@ -13,10 +13,17 @@ let config = {
     // email or twilio
     "smsGateway": process.env.smsGateway,
     "sendSms": process.env.smsGateway,
+
+    // if debug or dev is true, all email or sms will send to admins
+    "debug": process.env.debug || false,
+    "dev": process.env.dev || false
 };
 
-exports.setConfig = function (configObject) {
-    config = configObject;
+exports.setConfig = function (smsConfig, emailConfig) {
+    config = smsConfig;
+    if (emailConfig) {
+        email.setConfig(emailConfig);
+    }
 };
 
 exports.getConfig = function () {
@@ -33,7 +40,7 @@ module.exports.sendText = function (to, message, subject = 'subject', carrier = 
 
     if (config.sendSms) {
         // send sms is on
-        if (config.debug) {
+        if (config.debug || config.dev) {
             // in debuging mode, redirect all sms to admins through email
             email.sendEmail(to, message, true);
         } else {

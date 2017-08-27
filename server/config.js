@@ -170,7 +170,7 @@ for (let k in cfg) {
             process.env[dbKey] = cfg[k][dbKey];
         }
 
-    } else if (k === "firebaseConfig") {
+    } else if (k === "firebaseConfig" || k === "admins") {
         process.env[k] = JSON.stringify(cfg[k]);
     } else {
         process.env[k] = cfg[k];

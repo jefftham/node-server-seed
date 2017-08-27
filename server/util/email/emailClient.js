@@ -23,7 +23,14 @@ let config = {
 
     //  regular or  mailjet
     "emailGateway": process.env.emailGateway,
-    "sendEmail": process.env.sendEmail
+    "sendEmail": process.env.sendEmail || false,
+
+    // optional setting for advance features
+
+    // if debug or dev is true, all email or sms will send to admins
+    "debug": process.env.debug || false,
+    "dev": process.env.dev || false,
+    "admins": JSON.parse(process.env.admins)
 };
 
 exports.setConfig = function (configObject) {

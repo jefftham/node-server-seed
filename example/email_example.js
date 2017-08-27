@@ -17,7 +17,20 @@ let config = {
 
     //  regular or  mailjet (choose to use regular email or mailjet)
     "emailGateway": "regular",
-    "sendEmail": true
+    "sendEmail": true,
+
+    // optional setting for advance features
+
+    // if debug or dev is true, all email or sms will send to admins
+    "debug": false,
+    "dev": false,
+    "admins": [{
+        "name": "Admin 1",
+        "email": "test@abc.com",
+        "phoneNumber": 2223334444,
+        "carrier": "att" // refer to  https://github.com/jefftham/email-to-phone#list
+    }]
+
 };
 
 email.setConfig(config);
