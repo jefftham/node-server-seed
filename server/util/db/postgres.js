@@ -44,6 +44,24 @@ exports.getConfig = function () {
 }
 
 /*
+        const pg = require('./postgres');
+        let pgSql = `select id, name from foo where dept= $1 and salary > $2`;
+        let oraSql = pg.toOracleQuery(pgSql);
+        // oraSql = `select id, name from foo where dept= :0 and salary > :1`;
+ */
+exports.toOracleQuery = function (pgSql) {
+    // oracle use : (colon) as placeholder for param and it started from 0, eg.   :0
+    // postgres use $ (dollar sign) as placeholder for param and it started from 1, eg.  $1
+
+    let oraSql = pgSql.replace(/\$(\d+)\s*/g, (match, digit) => {
+        return ":" + (--digit) + " ";
+    });
+    return oraSql;
+    s
+}
+
+
+/*
  // example
 const pg = require('./postgres');
 const config = require('./../../config'); // load config

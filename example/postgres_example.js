@@ -37,3 +37,8 @@ postgres.query(sqlCommand, [],
     (res) => {
         console.log(res)
     });
+
+
+let pgSql = `select id, name from foo where dept= $1 and salary > $2`;
+let oraSql = postgres.toOracleQuery(pgSql);
+// oraSql = `select id, name from foo where dept= :0 and salary > :1`;

@@ -31,3 +31,8 @@ oracle.query(sqlCommand, [], (results) => {
     console.log(results.length);
     console.log(results);
 })
+
+
+let oraSql = `select id, name from foo where dept= :0 and salary > :1`;
+let pgSql = oracle.toPgQuery(oraSql);
+// pgSql =  `select id, name from foo where dept= $1 and salary > $2`;
