@@ -7,6 +7,9 @@ const _ = require('lodash');
 // object should not be empty
 exports.isEqual = function (obj1, obj2) {
 
+    // console.log(`obj1 result : `, JSON.stringify(obj1));
+    //  console.log(`obj2 result : `, JSON.stringify(obj2));
+
     let allObj1Keys;
     let allObj2Keys;
 
@@ -30,9 +33,11 @@ exports.isEqual = function (obj1, obj2) {
         console.log('length of the two objects is not equal');
         return false;
     }
+    //console.log(`length = ${allObj1Keys.length}`);
 
     // compare key
     for (let i = 0; i < allObj1Keys.length; i++) {
+        // console.log(`${allObj1Keys[i].toLocaleLowerCase()} vs ${allObj2Keys[i].toLocaleLowerCase()}`);
         if (allObj1Keys[i].toLocaleLowerCase() !== allObj2Keys[i].toLocaleLowerCase()) {
             console.log('keys of the two objects is not equal');
             console.log(`object1 =  ${allObj1Keys[i].toLocaleLowerCase()} | object2 =  ${allObj2Keys[i].toLocaleLowerCase()}`);
@@ -41,10 +46,11 @@ exports.isEqual = function (obj1, obj2) {
     }
 
     // compare value (disregard the datatype of the value)
-    for (let key in obj1) {
-        if (String(obj1[key]) !== String(obj2[key])) {
+    for (let i = 0; i < allObj1Keys.length; i++) {
+        // console.log(`${String(obj1[allObj1Keys[i]])} vs ${String(obj2[allObj2Keys[i]])}`);
+        if (String(obj1[allObj1Keys[i]]) !== String(obj2[allObj2Keys[i]])) {
             console.log('values of the two objects is not equal');
-            console.log(`${key} : object1 =  ${String(obj1[key])} | object2 =  ${String(obj2[key])}`);
+            console.log(`${allObj1Keys[i]} : object1 =  ${String(obj1[allObj1Keys[i]])} | object2 =  ${String(obj2[allObj2Keys[i]])}`);
             return false;
         }
     }
