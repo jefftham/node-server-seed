@@ -22,7 +22,7 @@ exports.isEqual = function (obj1, obj2) {
     }
 
     // empty object is not falsey
-    if (!obj1 || !obj2 || allObj1Keys || allObj2Keys) {
+    if (!obj1 || !obj2 || !allObj1Keys || !allObj2Keys) {
         console.log('Either one object is falsey, either undefined, null, or empty');
         return false;
     }
