@@ -39,6 +39,26 @@
      return pgSql;
  }
 
+ exports.procedureToOracleSql = function (oraSql) {
+     // the procedure may have different way to accept parameter,
+     // it may not use color (:)
+     // it may use question mark (?)
+     // eg
+     /*
+     DECLARE
+     id VARCHAR2(10) := ?;
+     case VARCHAR2(100) := ?;
+     BEGIN
+     GET_SOMETHING(id, case, ?);
+     END; ' */
+
+     let digit = 0;
+     let newSql = oraSql.replace(/(\?+)\s*/g, (match, m) => {
+         return ":" + (digit++) + " ";
+     });
+     return newSql;
+ }
+
  /*
  // example
  const oracle = require('./oracle');
@@ -216,6 +236,88 @@
                              }
 
                              processResultSet();
+                         }
+                     );
+
+                 }
+
+             );
+         });
+
+     }
+
+ }
+
+
+ exports.excute = function (sqlCommand, params, callback) {
+
+     let args = Array.from(arguments);
+     let lastParamPos = args.length - 1;
+
+     //let numRows = 100000; // number of rows to return from each call to getRows()
+     let numRows = 5;
+
+     if (typeof args[lastParamPos] === 'function') {
+         oracledb.getConnection(dbConnConfig,
+             function (err, connection) {
+                 if (err) {
+                     console.error(err.message);
+                     return;
+                 }
+
+                 // callback
+
+                 // callback
+                 connection.execute(
+                     // The statement to execute
+                     sqlCommand || `select sysdate from dual`,
+
+                     // The "bind value" 180 for the "bind variable" :id
+                     params || [],
+
+                     // Optional execute options argument, such as the query result format
+                     // or whether to get extra metadata
+
+                     function (err, results) {
+
+                         if (err) throw err;
+                         callback(results);
+
+                     }
+                 );
+
+             }
+
+         );
+         // end call
+     } else {
+         // promise
+         return new Promise((resolve, reject) => {
+             oracledb.getConnection(dbConnConfig,
+                 function (err, connection) {
+                     if (err) {
+                         console.error(err.message);
+                         return;
+                     }
+                     // callback
+                     connection.execute(
+                         // The statement to execute
+                         sqlCommand || `select sysdate from dual`,
+
+                         // The "bind value" 180 for the "bind variable" :id
+                         params || [],
+
+                         // Optional execute options argument, such as the query result format
+                         // or whether to get extra metadata
+
+                         function (err, results) {
+
+                             if (err) {
+                                 console.error(err.message);
+                                 return;
+                             }
+                             resolve(results);
+
                          }
                      );
 
