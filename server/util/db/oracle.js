@@ -16,6 +16,9 @@
 
  exports.setConfig = function (configObject) {
      dbConnConfig = configObject;
+     for (let key in dbConnConfig) {
+         process.env[key] = dbConnConfig[key];
+     }
  };
 
  exports.getConfig = function () {

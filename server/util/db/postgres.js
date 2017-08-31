@@ -35,6 +35,11 @@ let pool = new Pool(poolConfigComplete);
 
 exports.setConfig = function (configObject) {
     poolConfigComplete = Object.assign({}, poolConfig, configObject);
+
+    for (let key in poolConfigComplete) {
+        process.env[key] = poolConfigComplete[key];
+    }
+
     pool = new Pool(poolConfigComplete);
 };
 
