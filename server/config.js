@@ -9,14 +9,19 @@ let admins = json.parse(fs.readFileSync(path.join(__dirname, './env/administrato
 // load env setting based on process.env.NODE_ENV
 // use json
 
+// adopt concept from webpack setting,
+// always load environment setting from prod
+// dev and test environment setting override prod setting based on process.env.NODE_ENV
+
+console.log('loading env file from : ' + path.join(__dirname, './env/env.prod.json'));
+cfg = json.parse(fs.readFileSync(path.join(__dirname, './env/env.prod.json')).toString(), null, true);
+
 // did not specific whether the server is production or test ot development
 if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod') {
 
     console.log('server running in production mode.');
-    console.log('using env file from : ' + path.join(__dirname, './env/env.prod.json'));
-    cfg = json.parse(fs.readFileSync(path.join(__dirname, './env/env.prod.json')).toString(), null, true);
 
-    /*
+    /*  // prefer to define enviroment setting in json, these several lines of code are outdated
         console.log('using env file from : ' + path.join(__dirname, './env/.env'));
         dotenv.config({
             path: path.join(__dirname, './env/.env')
@@ -24,44 +29,36 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod') {
      */
     cfg.env = 'prod';
 
-} else if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'debug') {
+}
+
+// load test environment if process.env.NODE_ENV = 'test' or 'debug'
+if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'debug') {
 
     console.log('server running in debug mode.');
     console.log('using env file from : ' + path.join(__dirname, './env/env.test.json'));
-    cfg = json.parse(fs.readFileSync(path.join(__dirname, './env/env.test.json')).toString(), null, true);
+    cfg = {...cfg, ...json.parse(fs.readFileSync(path.join(__dirname, './env/env.test.json')).toString(), null, true) };
 
-    /*
-        console.log('using env file from : ' + path.join(__dirname, './env/.env.test'));
-        dotenv.config({
-            path: path.join(__dirname, './env/.env.test'),
-            silent: true
-        });
-     */
     cfg.env = 'debug';
 
-} else {
+}
+
+// load test environment if process.env.NODE_ENV = 'dev' or 'development'
+if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
     // treat it as development if  NODE_ENV is not set
     console.log('server running in development mode.');
     console.log('using env file from : ' + path.join(__dirname, './env/env.dev.json'));
-    cfg = json.parse(fs.readFileSync(path.join(__dirname, './env/env.dev.json')).toString(), null, true);
+    cfg = {...cfg, ...json.parse(fs.readFileSync(path.join(__dirname, './env/env.dev.json')).toString(), null, true) };
 
-    /*
-        console.log('using env file from : ' + path.join(__dirname, './env/.env.dev'));
-        dotenv.config({
-            path: path.join(__dirname, './env/.env.dev'),
-            silent: true
-        });
-     */
     cfg.env = 'dev';
 }
 
 // overide the environment json selection, use the secret json instead
 
+/*
     cfg = {};
     cfg = json.parse(fs.readFileSync(path.join(__dirname, './env/env.secret.json')).toString(), null, true);
     cfg.env = 'dev';
-
-
+*/
 
 // attach admins json to cfg object
 cfg.admins = admins;
