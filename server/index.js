@@ -1,12 +1,13 @@
 #!/usr/bin/env nodejs
 
 const http = require('http');
+const https = require('https');
 const config = require('./config');
+const letsencrypt = require('./letsencrypt');
 
 // Create Express web app
 const app = require('./webapp');
 
-const createServer = require("auto-sni");
 
 // const server = require('http').Server(app);
 
@@ -43,36 +44,7 @@ if (process.env.NODE && ~process.env.NODE.indexOf("heroku")) {
 
     if (config.FORCE_HTTPS) {
 
-        //middleware to change http to https
-        function ensureSecure(req, res, next) {
-            if (req.secure) {
-                return next();
-            }
-            res.redirect('https://' + req.hostname + ':' + 443 + req.url);
-        }
-
-        //check every methods (get,post,delete,...) and forced using https
-        // app.all('*', ensureSecure);
-
-        let server = createServer({
-            email: config.emailUser, // Emailed when certificates expire.
-            agreeTos: true, // Required for letsencrypt.
-            debug: false, // Add console messages and uses staging LetsEncrypt server. (Disable in production)
-            domains: [config.HTTPS_DOMAINS], // List of accepted domain names. (You can use nested arrays to register bundles with LE).
-            forceSSL: true, // Make this false to disable auto http->https redirects (default true).
-            redirectCode: 301, // If forceSSL is true, decide if redirect should be 301 (permanent) or 302 (temporary). Defaults to 302
-            ports: {
-                http: config.HTTP_PORT, // Optionally override the default http port.
-                https: config.HTTPS_PORT // // Optionally override the default https port.
-            }
-        }, app);
-
-        // Server is a "https.createServer" instance.
-        server.once("listening", () => {
-            console.log("Server running......");
-            console.log("https://localhost:" + config.HTTPS_PORT + "/");
-            console.log("default key-cert location:  ~/letsencrypt/etc/live/");
-        });
+        letsencrypt(app);
 
     } else {
         let server = http.createServer(app);
