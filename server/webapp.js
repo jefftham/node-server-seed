@@ -1,7 +1,7 @@
 let path = require('path');
 let express = require('express');
 let bodyParser = require('body-parser');
-let session = require('express-session');
+// let session = require('express-session');
 let flash = require('connect-flash');
 let morgan = require('morgan');
 let csurf = require('csurf');
@@ -20,7 +20,7 @@ let routes = require('./router');
 
 // Use morgan for HTTP request logging in dev and prod
 if (config.env === 'prod' || config.env === 'dev') {
-    app.use(morgan('combined'));
+  app.use(morgan('combined'));
 }
 
 // Run the app by serving the static files
@@ -28,43 +28,49 @@ if (config.env === 'prod' || config.env === 'dev') {
 app.use(express.static(__dirname + './../dist'));
 
 // Parse incoming form-encoded HTTP bodies
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 // Create and manage HTTP sessions for all requests
-app.use(session({
-    secret: config.secret,
-    resave: false,
-    saveUninitialized: true
-}));
+/*
+    app.use(session({
+        secret: config.secret,
+        resave: false,
+        saveUninitialized: true
+    }));
+*/
 
 // Use connect-flash to persist informational messages across redirects
 app.use(flash());
 
-app.use(function (req, res, next) {
-    //  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-    res.header('Access-Control-Expose-Headers', 'Content-Length');
-    res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range');
+app.use(function(req, res, next) {
+  //  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Expose-Headers', 'Content-Length');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Accept, Authorization, Content-Type, X-Requested-With, Range'
+  );
 
-    if (req.method === 'OPTIONS') {
-        return res.send(200);
-    } else {
-        return next();
-    }
+  if (req.method === 'OPTIONS') {
+    return res.send(200);
+  } else {
+    return next();
+  }
 });
-
 
 // Add CSRF protection for web routes
 if (config.env !== 'debug') {
-    app.use(csurf());
-    app.use(function (request, response, next) {
-        response.locals.csrftoken = request.csrfToken();
-        next();
-    });
+  app.use(csurf());
+  app.use(function(request, response, next) {
+    response.locals.csrftoken = request.csrfToken();
+    next();
+  });
 }
 
 app.use(routes);
