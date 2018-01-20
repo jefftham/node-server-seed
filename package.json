@@ -1,13 +1,16 @@
 {
   "name": "node-server-seed",
   "version": "1.0.0",
-  "description": "A production ready server created by Nodejs with a series of helpful pre-configured functionalities, eg. scheduler, HTTPS cert creation, send text message, send email, write & parse csv, database interaction (Oracle, PostgreSQL, Firebase), etc.",
+  "description":
+    "A production ready server created by Nodejs with a series of helpful pre-configured functionalities, eg. scheduler, HTTPS cert creation, send text message, send email, write & parse csv, database interaction (Oracle, PostgreSQL, Firebase), etc.",
   "scripts": {
     "prestart": "npm run build",
-    "start": "cross-env NODE_ENV=production node ./server/index.js",
+    "start": "cross-env NODE_ENV=prod node ./server/index.js",
     "build": "webpack --config webpack.prod.js",
-    "dev": "cross-env NODE_ENV=dev npm-run-all --parallel watch:build  watch:server ",
-    "debug": "cross-env NODE_ENV=debug npm-run-all --parallel watch:build watch:server ",
+    "dev":
+      "cross-env NODE_ENV=dev npm-run-all --parallel watch:build  watch:server ",
+    "debug":
+      "cross-env NODE_ENV=debug npm-run-all --parallel watch:build watch:server ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch:build": "webpack --watch --config webpack.dev.js",
     "watch:server": "nodemon \"./server/index.js\" --watch \"./dist\""

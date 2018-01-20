@@ -70,8 +70,8 @@ sudo iptables -S
 sudo npm install -g pm2
 
 # start service
-#pm2 start ./server/index.js -o ./logs/output.log -e ./logs/error.log
-pm2 start npm -- start -o ./logs/output.log -e ./logs/error.log
+pm2 start ./pm2Start.sh -o ./logs/output.log -e ./logs/error.log
+#pm2 start npm -- start -o="./logs/output.log" -e="./logs/error.log"
 
 pm2 startup systemd
 

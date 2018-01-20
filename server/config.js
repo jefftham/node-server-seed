@@ -86,7 +86,7 @@ if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
 /*
     cfg = {};
     cfg = json.parse(fs.readFileSync(path.join(__dirname, './env/env.secret.json')).toString(), null, true);
-    cfg.env = 'dev';
+    cfg.env = 'prod';
 */
 
 // attach admins json to cfg object
