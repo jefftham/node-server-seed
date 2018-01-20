@@ -4,7 +4,7 @@ let bodyParser = require('body-parser');
 // let session = require('express-session');
 let flash = require('connect-flash');
 let morgan = require('morgan');
-let csurf = require('csurf');
+// let csurf = require('csurf');
 let config = require('./config');
 let sms = require('./util/messaging/smsNotifications');
 let email = require('./util/email/emailNotifications');
@@ -46,6 +46,7 @@ app.use(
 // Use connect-flash to persist informational messages across redirects
 app.use(flash());
 
+// allow CORS
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header(
@@ -56,13 +57,15 @@ app.use(function(req, res, next) {
 });
 
 // Add CSRF protection for web routes
-if (config.env !== 'debug') {
-  app.use(csurf());
-  app.use(function(request, response, next) {
-    response.locals.csrftoken = request.csrfToken();
-    next();
-  });
-}
+/*
+  if (config.env !== 'debug') {
+    app.use(csurf());
+    app.use(function(request, response, next) {
+      response.locals.csrftoken = request.csrfToken();
+      next();
+    });
+  }
+*/
 
 app.use(routes);
 
