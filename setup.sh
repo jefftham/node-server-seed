@@ -34,9 +34,17 @@ sudo cp /usr/share/zoneinfo/US/Eastern /etc/localtime
 # download nodejs setup script
 pushd ~
 
-curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
-sudo bash nodesource_setup.sh
-sudo apt-get install nodejs -y
+# download nodejs with NVM, ref: https://github.com/creationix/nvm
+# this method avoid the need of using sudo npm
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+source ~/.bashrc
+nvm install --lts  # install latest nodejs with long-term support
+nvm run node --version
+
+# alternative way to download nodejs
+# curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
+# sudo bash nodesource_setup.sh
+# sudo apt-get install nodejs -y
 sudo apt-get install build-essential -y
 
 # allow nodejs listen to port 80 and 443
@@ -48,9 +56,10 @@ popd
 
 # install npm dependencies
 ## sudo npm install -g @angular/cli@1.2.0
-sudo npm install -g node-gyp
+npm install -g node-gyp
+npm install deasync
 npm install
-sudo npm install deasync
+
 ## sudo npm install firebase-admin
 
 # make the nodejs server script executable
