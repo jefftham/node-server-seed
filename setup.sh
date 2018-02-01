@@ -89,4 +89,7 @@ sudo env PATH=$PATH:/usr/bin $(which pm2) startup systemd -u $USER --hp /home/$U
 
 pm2 save
 
+# new SSH session works fine
+# if you need to work on nodejs in current session, run following command
+source ~/.bashrc
 
