@@ -31,6 +31,13 @@ echo 'America/New_York' > sudo /etc/timezone
 sudo rm /etc/localtime
 sudo cp /usr/share/zoneinfo/US/Eastern /etc/localtime
 
+# route 80 to 8080 and 443 to 8443
+bash ./setup/iptables.sh
+
+# show open ports
+netstat -tln
+sudo iptables -S
+
 # download nodejs setup script
 pushd ~
 
@@ -65,18 +72,11 @@ npm install
 # make the nodejs server script executable
 chmod +x ./server/index.js
 
-# route 80 to 8080 and 443 to 8443
-bash ./setup/iptables.sh
-
-# show open ports
-netstat -tln
-sudo iptables -S
-
 # install postgreSQL
 # bash ./setup/postgresql.sh
 
 # install PM2
-sudo npm install -g pm2
+npm install -g pm2
 
 # start service
 pm2 start ./pm2Start.sh -o ./logs/output.log -e ./logs/error.log
@@ -85,7 +85,7 @@ pm2 start ./pm2Start.sh -o ./logs/output.log -e ./logs/error.log
 pm2 startup systemd
 
 #  you need to change this. based on the  result of  pm2 startup systemd
-sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp /home/$USER
+sudo env PATH=$PATH:/usr/bin $(which pm2) startup systemd -u $USER --hp /home/$USER
 
 pm2 save
 
